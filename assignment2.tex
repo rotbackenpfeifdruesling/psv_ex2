@@ -1,0 +1,331 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{latexsym}
+\usepackage{paralist}
+\usepackage{amssymb}
+\usepackage{url}
+
+\parskip        0mm
+\oddsidemargin  0in
+\evensidemargin 0in
+\textwidth      6in
+\topmargin      0in
+\marginparwidth 30pt
+\textheight     9.2in
+\headheight     .1in
+\headsep        .1mm
+
+\title{VU Programm- und Systemverifikation\\
+\Large Homework: Hoare Logic}
+\author{Name: \underline{David Pernerstorfer}\qquad Matr. number: \underline{01633068}}
+\date{{\bf Due date:} May 15, 2018, \underline{1pm}}
+
+\usepackage{listings}
+\lstset{
+  basicstyle=\footnotesize\ttfamily, % Standardschrift
+  numbers=left,               % Ort der Zeilennummern
+  numberstyle=\tiny,          % Stil der Zeilennummern
+  numbersep=5pt,              % Abstand der Nummern zum Text
+  tabsize=2,                  % Groesse von Tabs
+  extendedchars=true,         %
+  breaklines=true,            % Zeilen werden Umgebrochen
+  keywordstyle=\ttfamily,
+  stringstyle=\ttfamily, % Farbe der String
+  showspaces=false,           % Leerzeichen anzeigen ?
+  showtabs=false,             % Tabs anzeigen ?
+  xleftmargin=17pt,
+  framexleftmargin=17pt,
+  framexrightmargin=5pt,
+  framexbottommargin=4pt,
+  showstringspaces=false      % Leerzeichen in Strings anzeigen ?
+}
+\lstloadlanguages{
+  C , C++, ml
+}
+
+
+\gdef\dash---{\thinspace---\hskip.16667em\relax}
+\gdef\smdash--{\thinspace--\hskip.16667em\relax}
+\newcommand{\emn}[1]{{\em #1\/}}
+\gdef\op|{\,|\;}
+
+\newcommand{\true}{{\sc true}}
+
+\begin{document}
+
+\maketitle
+
+\paragraph{Task 1 (5 points):}
+Prove the Hoare Triple below (assume that the domain of
+all variables except {\tt r} in the program are the natural numbers
+including 0, and {\tt r} is a Boolean variable). The operator
+{\tt\%} is the modulo operator of the C programming language
+(equivalent to {\sf mod} in the post-condition).
+You need to find a sufficiently strong loop invariant.
+%%
+Annotate the following code directly with the required assertions.
+Justify each assertion by stating which Hoare rule you used
+to derive it.
+
+\newpage
+
+\begin{tabbing}
+  \quad\=\quad\=\quad\=\\\kill
+  $\{\mathsf{true}\}$\\[5ex]
+  $\{\mathsf{true}\}$\\[2.5ex]
+  {\tt r = false;}\\[2.5ex]
+  $\{ (\neg r)\}$\\[2.5ex]
+  {\tt i = n;}\\[2.5ex]
+  $\{ ((\neg r) \, \vee \, ((i < n) \,\wedge \, (i > 2) \, \wedge \, (n~\mathsf{mod}~i = 0))) \}$\\[2.5ex]
+  {\tt while ((i > 2) $\wedge$ (!r)) \{}\\[2.5ex]
+  \>$\{ ((\neg r) \, \vee \, ((i < n) \,\wedge \, (i > 2) \, \wedge \, (n~\mathsf{mod}~i = 0))) \}$\\[2.5ex]
+  \>{\tt i = i - 1;}\\[2.5ex]
+  \>{\tt if (n \% i == 0)}\\[2.5ex]
+  \>\>{\tt r = true;}\\[2.5ex]
+  \>{\tt else }\\[2.5ex]
+  \>\>{\tt skip;}\\[2.5ex]
+  \>$\{ ((\neg r) \, \vee \, ((i < n) \,\wedge \, (i > 2) \, \wedge \, (n~\mathsf{mod}~i = 0))) \}$\\[2.5ex]
+  {\tt \}}\\[2.5ex]
+  % $\{ ((i \le 2) \, \vee \, r) \, \wedge \, ((\neg r) \, \vee \, ((i < n) \, \wedge \, (i > 2) \, \wedge \, (n~\mathsf{mod}~i = 0))) \}$\\[5ex]
+  $\{ ((\neg r) \, \wedge \, (i \le 2)) \, \vee \, (r \, \wedge \, (i < n) \, \wedge \, (i > 2) \, \wedge \, (n~\mathsf{mod}~i = 0))) \}$\\[5ex]
+  $\{ r\Rightarrow \left(\exists j\,.\,(j>1)\wedge(j<n)\wedge(n~\mathsf{mod}~j = 0)\right)\}$
+\end{tabbing}
+
+\clearpage
+
+\paragraph{Task 2 (5 points):}
+
+Prove the Hoare Triple below (assume that the domain of
+all variables in the program are the integers,
+i.e., ${\tt x}, {\tt y}, {\tt n}, {\tt m}\in\mathbb{Z}$.
+You need to find a sufficiently strong loop invariant.
+In the post-condition, $\vert n-m \vert$ denotes the absolute value of expression $n-m$.
+
+Annotate the following code directly with the required assertions.
+\underline{Justify} each assertion by stating which Hoare rule you used
+to derive it, and the premise(s) of that rule. If you strengthen
+or weaken conditions, explain your reasoning.
+
+\begin{tabbing}
+  \quad\=\quad\=\quad\=\\\kill
+  $\{\mathsf{true}\}$\\[5ex]
+  {\tt x := n;}\\[5ex]
+  {\tt y := m;}\\[5ex]
+  {\tt if (x > y) \{}\\[5ex]
+  \>{\tt t := x;}\\[5ex]
+  \>{\tt x := y;}\\[5ex]
+  \>{\tt y := t;}\\[5ex]
+  {\tt\} else \{ }\\[5ex]
+  \>{\tt skip;}\\[5ex]
+  {\tt \}}\\[5ex]
+  {\tt while (x != 0)} \{\\[5ex]
+  \>{\tt x := x - 1;}\\[5ex]
+  \>{\tt y := y - 1;}\\[5ex]
+  {\}}\\[5ex]
+  $\{(y = \vert n - m\vert)\}$
+\end{tabbing}
+
+\clearpage
+
+\paragraph{Task 3 (5 points):}
+Download the latest version of the
+C Bounded Model Checker (\textsc{Cbmc}) from
+\url{http://www.cprover.org/cbmc/} and familiarize
+yourself with the tool using the manual you can find on the
+same web-page. Use {\sc Cbmc} to detect the heartbleed
+bug (which we discussed in the lecture) in the simplified code below,
+and explain how you used the tool to detect the bug:
+\begin{itemize}
+\item Which \emph{unwinding depth} was required?
+\item Which command-line parameters did you have to specify?
+\item Which property was violated (as reported by {\sc Cbmc})?
+\item Provide a fix for the bug!
+  \begin{itemize}
+    \item Provide your solution by
+      providing a short code snippet and indicate by referring to the
+      line numbers where it should be inserted in the listing below.
+    \item \emph{In addition}, upload your fixed implementation as
+      {\tt heartbleed\_fixed.c} on TUWEL.
+    \item Use {\sc Cbmc} to verify that your solution is correct!
+    \end{itemize}
+\end{itemize}
+
+\noindent
+\begin{lstlisting}
+#include <string.h>
+#include <stdlib.h>
+
+typedef struct {
+  unsigned char type;
+  unsigned char data[42];
+  unsigned int len;
+} ssl_buffer;
+
+typedef struct {
+  ssl_buffer buffer;
+} SSL;
+
+/* function stubs - we don't need the implementation */
+void RAND_pseudo_bytes (unsigned char*, unsigned int);
+int ssl3_write_bytes (SSL*, unsigned, void*, unsigned);
+unsigned int nondet_uint();
+unsigned char nondet_uchar();
+
+#define n2s(c,s)	((s=(((unsigned int)(c[0]))<< 8)| \
+			    (((unsigned int)(c[1]))    )),c+=2)
+#define s2n(s,c)	((c[0]=(unsigned char)(((s)>> 8)&0xff), \
+			  c[1]=(unsigned char)(((s)    )&0xff)),c+=2)
+
+#define TLS1_HB_REQUEST		1
+#define TLS1_HB_RESPONSE	2
+#define TLS1_RT_HEARTBEAT 24
+
+int tls1_process_heartbeat(SSL *s) {
+  unsigned char *p = s->buffer.data, *pl;
+
+  unsigned char hbtype;
+  unsigned int payload;
+  unsigned int padding = 16;
+
+  hbtype = s->buffer.type;
+  n2s(p, payload);
+  pl = p;
+
+  if (hbtype == TLS1_HB_REQUEST) {
+    unsigned char *buffer, *bp;
+    int r;
+
+    /* Allocate memory for the response, size is 1 bytes
+     * message type, plus 2 bytes payload length, plus
+     * payload, plus padding
+     */
+    buffer = malloc(1 + 2 + payload + padding);
+    bp = buffer;
+
+    /* Enter response type, length and copy payload */
+    *bp++ = TLS1_HB_RESPONSE;
+    s2n(payload, bp);
+    memcpy(bp, pl, payload);
+    bp += payload;
+    /* Random padding */
+    RAND_pseudo_bytes(bp, padding);
+
+    r = ssl3_write_bytes(s, TLS1_RT_HEARTBEAT, buffer, 3 + payload + padding);
+
+    if (r < 0)
+      return r;
+  }
+  else if (hbtype == TLS1_HB_RESPONSE) {
+    // ...
+  }
+
+  return 0;
+}
+
+int main() {
+  SSL obj;
+
+  obj.buffer.type = TLS1_HB_REQUEST;
+  // non-deterministically assign a length of the buffer
+  obj.buffer.len = nondet_uint();
+  return tls1_process_heartbeat(&obj);
+}
+\end{lstlisting}
+
+\vfill
+The source code {\tt heartbleed.c} can also be downloaded from TISS.
+\vfill
+
+\clearpage
+
+\paragraph{Task 4 (5 points):}
+Use the \textsc{Klee} symbolic simulator (using the Docker image
+from \url{klee.github.io} as explained in the lecture) to test
+the following implementation of Euclid's algorithm:
+
+\noindent
+\begin{lstlisting}
+unsigned gcd (unsigned x, unsigned y)
+{
+  unsigned m, k;
+  if (x > y) {
+    k = x;
+    m = y;
+  }
+  else {
+    k = y;
+    m = x;
+  }
+
+  while (m != 0) {
+    unsigned r = k % m;
+    k = m; m = r;
+  }
+  return k;
+}
+\end{lstlisting}
+
+Use \textsc{Klee} to generate test inputs from the following
+\emph{specification}:
+
+\noindent
+\begin{lstlisting}
+#define MIN(x, y) ((x)<(y))?(x):(y)
+#define MAX(x, y) ((x)<(y))?(y):(x)
+#define IS_CD(r, x, y) (((x)%(r)==0)&&((y)%(r)==0))
+
+unsigned gcd (unsigned x, unsigned y)
+{
+  for (unsigned t = MIN (x,y); t>0; t--) {
+    if (IS_CD(t, x, y))
+      return t;
+  }
+  return MAX(x, y);
+}
+\end{lstlisting}
+
+(The source code of both implementations can be downloaded from TISS.)
+
+\begin{itemize}
+\item How many test cases are required \emph{at least} to
+  achieve branch coverage for the implementation?
+\item Provide a \emph{minimal} number of test cases generated
+  with {\sc Klee} such that branch coverage for the implementation
+  is achieved!
+  \begin{center}
+    \begin{tabular}{|c|c||c|}
+      \hline
+      {\tt x} & {\tt y} & {\tt gcd(x,y)} \\
+      \hline
+      0 & 0 & 0 \\
+      1 & 2 & 0 \\
+      & &\\[7ex] \\
+    \end{tabular}
+  \end{center}
+  \vfill
+  \emph{In addition}, upload the {\tt ktest} files representing
+  your test cases above (zipped in a folder {\tt klee-last} and
+  named {\tt test00000$n$.ktest}) to TUWEL. Make sure the
+  symbolic variables are called {\tt x} and {\tt y}!
+\end{itemize}
+
+\clearpage
+\begin{itemize}
+\item If a given test suite achieves branch coverage
+  for the specification, does the same test suite also
+  achieve branch coverage for the implementation \ldots
+  \begin{compactitem}
+  \item for this specific example?
+  \item in general?
+  \end{compactitem}
+  For both cases, explain why!
+\end{itemize}
+
+{\bf Hint:} To replay the test cases, you need to make sure that
+the environment variable {\tt LD\_LIBRARY\_PATH} points to the
+directory {\tt /home/klee/klee\_build/klee/lib} containing
+the library {\tt libkleeRuntest.so.1.0}!
+
+\vfill
+Upload a pdf file with your solutions to TUWEL by May 15, 2018.
+
+\end{document}
